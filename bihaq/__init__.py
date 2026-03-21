@@ -90,7 +90,7 @@ def predict(
     model: BIHAQ,
     ref: str | Path | torch.Tensor,
     deg: str | Path | torch.Tensor,
-    sample_rate: int = SAMPLE_RATE,
+    input_sample_rate: int | None = None,
 ) -> float:
     """Score a single reference / degraded pair.
 
@@ -98,23 +98,29 @@ def predict(
         model: A :class:`BIHAQ` instance (from :func:`load_model`).
         ref: File path **or** tensor ``(2, samples)`` of stereo reference audio.
         deg: File path **or** tensor ``(2, samples)`` of stereo degraded audio.
-        sample_rate: Target sample rate. Audio loaded from files is resampled
-            to this rate when it doesn't match.
+        input_sample_rate: Sample rate of the input when passing tensors.
+            If the rate differs from :data:`SAMPLE_RATE` (32 kHz) the audio
+            is resampled automatically.  Ignored when loading from file paths
+            (the file's native rate is read instead).
 
     Returns:
         Quality score in ``[0, 1]`` (higher is better).
     """
 
-    def _load(src):
+    def _prepare(src):
         if isinstance(src, (str, Path)):
             wav, sr = torchaudio.load(str(src))
-            if sr != sample_rate:
-                wav = torchaudio.transforms.Resample(sr, sample_rate)(wav)
+            if sr != SAMPLE_RATE:
+                wav = torchaudio.transforms.Resample(sr, SAMPLE_RATE)(wav)
             return wav
+        if input_sample_rate is not None and input_sample_rate != SAMPLE_RATE:
+            src = torchaudio.transforms.Resample(
+                input_sample_rate, SAMPLE_RATE,
+            )(src)
         return src
 
-    ref_t = _load(ref).unsqueeze(0)
-    deg_t = _load(deg).unsqueeze(0)
+    ref_t = _prepare(ref).unsqueeze(0)
+    deg_t = _prepare(deg).unsqueeze(0)
 
     device = next(model.parameters()).device
     ref_t, deg_t = ref_t.to(device), deg_t.to(device)

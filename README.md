@@ -22,7 +22,7 @@ network with sigmoid output.
 pip install -e .
 ```
 
-Requires Python >= 3.10, PyTorch >= 2.0, and torchaudio >= 2.0.
+Requires Python >= 3.10, PyTorch >= 2.2, and torchaudio >= 2.2.
 
 ## Quick start
 
@@ -35,7 +35,21 @@ score = predict(model, "reference.wav", "degraded.wav")
 print(f"Quality: {score:.4f}")
 ```
 
-Or with more control:
+With tensors (resampled automatically when `input_sample_rate` is given):
+
+```python
+import torchaudio
+from bihaq import load_model, predict
+
+model = load_model("weights/bihaq.pt")
+
+ref, sr = torchaudio.load("reference.wav")
+deg, _  = torchaudio.load("degraded.wav")
+
+score = predict(model, ref, deg, input_sample_rate=sr)
+```
+
+Or calling the model directly for full control:
 
 ```python
 import torch
@@ -66,7 +80,7 @@ print(out["bin"])     # binaural branch     (batch,)
 ## Input requirements
 
 - **Stereo** audio (2 channels).
-- **Hearing loss:** the degraded signal should have hearing loss simulated. The model does not automatically apply hearing loss simulation.
+- **Hearing loss:** the degraded signal should have hearing loss simulated. The model is not designed to apply hearing loss simulation itself (yet)
 - **Sample rate:** 32 kHz (the `predict` helper resamples automatically; if
   calling `model.forward` directly, resample beforehand).
 - Both reference and degraded signals should be **time-aligned** and the
@@ -87,6 +101,7 @@ examples/
 weights/
   bihaq.pt
 ```
+
 
 ## License
 

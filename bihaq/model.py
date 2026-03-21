@@ -62,7 +62,7 @@ class BIHAQ(nn.Module):
 
     Args:
         mon_encoder: Monaural encoder (e.g. :class:`MonEncoder`).
-        mon_cnn: CNN for spectrogram features (e.g. :class:`SpectrogramDeltaCNN`).
+        mon_cnn: CNN for spectrogram delta features (e.g. :class:`SpectrogramDeltaCNN`).
         bin_encoder: Binaural encoder (e.g. :class:`BinEncoder`).
         mon_cnn_out_dim: Feature dim produced by *mon_cnn*.
         num_filts: Number of gammatone filters in the binaural encoder.
