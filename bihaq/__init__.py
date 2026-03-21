@@ -107,17 +107,22 @@ def predict(
         Quality score in ``[0, 1]`` (higher is better).
     """
 
+    def _to_stereo(wav):
+        if wav.shape[0] == 1:
+            return wav.expand(2, -1)
+        return wav
+
     def _prepare(src):
         if isinstance(src, (str, Path)):
             wav, sr = torchaudio.load(str(src))
             if sr != SAMPLE_RATE:
                 wav = torchaudio.transforms.Resample(sr, SAMPLE_RATE)(wav)
-            return wav
+            return _to_stereo(wav)
         if input_sample_rate is not None and input_sample_rate != SAMPLE_RATE:
             src = torchaudio.transforms.Resample(
                 input_sample_rate, SAMPLE_RATE,
             )(src)
-        return src
+        return _to_stereo(src)
 
     ref_t = _prepare(ref).unsqueeze(0)
     deg_t = _prepare(deg).unsqueeze(0)
