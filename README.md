@@ -56,7 +56,7 @@ import torch
 import torchaudio
 from bihaq import load_model, SAMPLE_RATE
 
-model = load_model("weights/bihaq.pt", map_location="cuda")
+model = load_model("weights/bihaq.pt")
 
 ref, sr = torchaudio.load("reference.wav")
 deg, _  = torchaudio.load("degraded.wav")
@@ -67,7 +67,7 @@ if sr != SAMPLE_RATE:
     ref, deg = resample(ref), resample(deg)
 
 # Add batch dimension: (2, samples) -> (1, 2, samples)
-ref, deg = ref.unsqueeze(0).cuda(), deg.unsqueeze(0).cuda()
+ref, deg = ref.unsqueeze(0), deg.unsqueeze(0)
 
 with torch.no_grad():
     out = model(ref, deg)
