@@ -80,7 +80,7 @@ print(out["bin"])     # binaural branch     (batch,)
 ## Input requirements
 
 - **Stereo** audio (2 channels).
-- **Hearing loss:** the degraded signal should have hearing loss simulated. The model is not designed to apply hearing loss simulation itself (yet)
+- **Hearing loss:** the degraded signal should have hearing loss simulated. The model is not designed to apply hearing loss simulation itself (yet).
 - **Sample rate:** 32 kHz (the `predict` helper resamples automatically; if
   calling `model.forward` directly, resample beforehand).
 - Both reference and degraded signals should be **time-aligned** and the
@@ -97,7 +97,6 @@ bihaq/
   dsp.py           # GammatoneFilterBank
 examples/
   predict.py       # Minimal usage example
-  export_weights.py
 weights/
   bihaq.pt
 ```
