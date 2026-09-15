@@ -11,5 +11,5 @@ dependencies = [
     "torchaudio==2.2.2 ; sys_platform == 'darwin' and platform_machine == 'x86_64'",
     "torchaudio>=2.2 ; sys_platform != 'darwin' or platform_machine != 'x86_64'",
     "scipy",
-    "numpy",
+    "numpy<2",
 ]
