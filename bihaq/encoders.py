@@ -15,14 +15,14 @@ class MonEncoder(nn.Module):
 
     Args:
         n_fft: FFT size.
-        hop_size: STFT hop length in samples.
+        hop_size: STFT hop length in samples (1024 at 44.1 kHz).
         input_batchnorm: Apply batch normalisation to spectrograms.
     """
 
     def __init__(
         self,
         n_fft: int = 2048,
-        hop_size: int = 2048,
+        hop_size: int = 1024,
         input_batchnorm: bool = False,
     ):
         super().__init__()
@@ -133,9 +133,9 @@ class BinEncoder(nn.Module):
     def __init__(
         self,
         num_filts: int = 20,
-        frame_len: int = 1024,
+        frame_len: int = 2048,
         hop_size: int = 1024,
-        sample_rate: int = 32000,
+        sample_rate: int = 44100,
     ):
         super().__init__()
         self.num_filts = num_filts

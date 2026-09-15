@@ -22,9 +22,9 @@ class BinauralMetrics(nn.Module):
 
     def __init__(
         self,
-        frame_len: int = 1024,
+        frame_len: int = 2048,
         hop_size: int = 1024,
-        sample_rate: int = 32000,
+        sample_rate: int = 44100,
         filter_num: int = 20,
     ):
         super().__init__()

@@ -33,7 +33,7 @@ class GammatoneFilterBank(nn.Module):
     def __init__(
         self,
         low_freq: float = 100.0,
-        sample_rate: float = 32000,
+        sample_rate: float = 44100,
         filter_num: int = 20,
     ):
         super().__init__()

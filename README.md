@@ -1,17 +1,22 @@
 # Binaural Hearing Aid Music Quality
 
-A learned, full-reference metric for **binaural (stereo) audio quality**.
+A learned, full-reference metric for **binaural audio quality**.
 Given a stereo reference and a degraded version, BIHAQ returns a score in
-`[0, 1]` that correlates with human perceptual ratings.
+`[0, 1]` that correlates with human perceptual ratings of music processed
+through simulated hearing aids.
+
+Reported paper metrics use five-fold **out-of-fold** models. The checkpoint
+in `weights/bihaq.pt` is a separate network trained on **all labelled items**
+(train/val only) for reuse.
 
 ## Architecture
 
-BIHAQ uses two parallel branches:
+BIHAQ uses two parallel branches (44.1 kHz):
 
 | Branch | Input | Feature extraction | Temporal model |
 |---|---|---|---|
-| **Monaural** | STFT magnitude spectrogram (mid-channel delta) | 2-D CNN | Bi-LSTM |
-| **Binaural** | ILD, IPD, IACC from gammatone filterbank (delta) | -- | Bi-LSTM |
+| **Monaural** | STFT magnitude spectrogram (mid-channel delta, n_fft=2048, hop=1024) | 2-D CNN | Bi-LSTM |
+| **Binaural** | ILD, IPD, IACC from a 20-band gammatone filterbank (frame=2048, hop=1024) | -- | Bi-LSTM |
 
 Both branches are pooled via gated attention and concatenated into a dense
 network with sigmoid output.
@@ -61,12 +66,10 @@ model = load_model("weights/bihaq.pt")
 ref, sr = torchaudio.load("reference.wav")
 deg, _  = torchaudio.load("degraded.wav")
 
-# Resample to 32 kHz if needed
 if sr != SAMPLE_RATE:
     resample = torchaudio.transforms.Resample(sr, SAMPLE_RATE)
     ref, deg = resample(ref), resample(deg)
 
-# Add batch dimension: (2, samples) -> (1, 2, samples)
 ref, deg = ref.unsqueeze(0), deg.unsqueeze(0)
 
 with torch.no_grad():
@@ -80,8 +83,8 @@ print(out["bin"])     # binaural branch     (batch,)
 ## Input requirements
 
 - **Stereo** audio (2 channels).
-- **Hearing loss:** the degraded signal should have hearing loss simulated. The model is not designed to apply hearing loss simulation itself (yet).
-- **Sample rate:** 32 kHz (the `predict` helper resamples automatically; if
+- **Hearing loss:** the degraded signal should have hearing loss simulated. The model is not designed to apply hearing loss simulation itself.
+- **Sample rate:** 44.1 kHz (the `predict` helper resamples automatically; if
   calling `model.forward` directly, resample beforehand).
 - Both reference and degraded signals should be **time-aligned** and the
   **same length**.
@@ -96,9 +99,9 @@ bihaq/
   binaural.py      # BinauralMetrics (ILD, IPD, IACC)
   dsp.py           # GammatoneFilterBank
 examples/
-  predict.py       # Minimal usage example
+  predict.py
 weights/
-  bihaq.pt
+  bihaq.pt         # full-data checkpoint (add after training)
 ```
 
 
