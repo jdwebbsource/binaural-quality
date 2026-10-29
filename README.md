@@ -6,8 +6,7 @@ Given a stereo reference and a degraded version, BIHAQ returns a score in
 through simulated hearing aids.
 
 Reported paper metrics use five-fold **out-of-fold** models. The checkpoint
-in `weights/bihaq.pt` is a separate network trained on **all labelled items**
-(train/val only) for reuse.
+in `weights/bihaq.pt` is a separate network trained on **all labelled items**.
 
 ## Architecture
 
@@ -101,7 +100,7 @@ bihaq/
 examples/
   predict.py
 weights/
-  bihaq.pt         # full-data checkpoint (add after training)
+  bihaq.pt         # model weights
 ```
 
 
