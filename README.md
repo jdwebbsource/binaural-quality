@@ -25,6 +25,10 @@ network with sigmoid output.
 ```bash
 pip install -e .
 ```
+or via uv
+```bash
+uv sync
+```
 
 Requires Python >= 3.10, PyTorch >= 2.2, and torchaudio >= 2.2.
 
